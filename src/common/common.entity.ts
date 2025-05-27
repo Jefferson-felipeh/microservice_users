@@ -2,8 +2,8 @@ import { CreateDateColumn, DeleteDateColumn, Entity, ObjectIdColumn, UpdateDateC
 
 @Entity('common-entity')
 export class CommonEntity{
-    @ObjectIdColumn('uuid')
-    id:string
+    @ObjectIdColumn()
+    _id:string
 
     @CreateDateColumn()
     created_at:Date

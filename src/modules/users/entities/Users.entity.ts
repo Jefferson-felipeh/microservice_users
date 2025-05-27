@@ -1,7 +1,7 @@
 import { CommonEntity } from "src/common/common.entity";
 import { Column, Entity } from "typeorm";
 
-@Entity()
+@Entity('users')
 export class Users extends CommonEntity{
 
     //Primeiro nome do usuário_

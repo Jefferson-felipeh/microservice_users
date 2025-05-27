@@ -19,6 +19,9 @@ npm install bcrypt
 Biblioteca para criar microservice_
 npm install @nestjs/microservices
 
+Irei utilizar o RabbitMQ para comunicação eficiente entre os microserviços_
+npm install amqplib
+
 ----------------------------------------------------------------------------------
 Estrutura dos módulos de usuários_
 Dados Básicos:
