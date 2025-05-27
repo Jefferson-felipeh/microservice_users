@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeormConfig } from 'database/typeorm.config';
+import { groupModules } from './modules';
 
 
 @Module({
@@ -13,7 +14,8 @@ import { TypeormConfig } from 'database/typeorm.config';
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeormConfig
-    })
+    }),
+    ...groupModules
   ],
 })
 export class AppModule {}
