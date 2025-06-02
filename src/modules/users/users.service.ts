@@ -8,6 +8,7 @@ export class UsersService{
 
     constructor(private repository:UsersRepository){}
 
+    //Método responsável por validar os dados antes de serem enviados ao repositório, cumprindo o principio da responsabilidade unica_
     async create(dataBody:CreateUserDTO):Promise<CreateUserDTO>{
         try{
 
@@ -22,10 +23,12 @@ export class UsersService{
         }
     }
 
+    //Método que chama o método do repositório que lista todos os usuários_
     getAll(){
         return this.repository.getAll();
     }
 
+    //Método responsavel por validar as informações fornecidas para deletar um usuário especifico com base no seu id_
     async delete(id:string):Promise<object>{
         try{
             if(!id) throw new HttpException('Id não encontrado!',HttpStatus.BAD_REQUEST);
