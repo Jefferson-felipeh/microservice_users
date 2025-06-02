@@ -8,11 +8,11 @@ import { groupModules } from './modules';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true,//Tornando as variaveis do arquivo .env globais para toda aplicação;
       load: [],
       envFilePath: '.env'
     }),
-    TypeOrmModule.forRootAsync({
+    TypeOrmModule.forRootAsync({//Configurações do typeorm_
       useClass: TypeormConfig
     }),
     ...groupModules
