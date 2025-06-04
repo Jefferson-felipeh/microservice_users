@@ -1,15 +1,36 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, Param, Patch, Post, Query } from "@nestjs/common";
 import { CreateUserDTO } from "./dtos/createUserDto.dto";
 import { UsersService } from "./users.service";
-import { get } from "http";
+import { UpdateUserDto } from "./dtos/updateUserDto.dto";
+import { QueryUserDto } from "./dtos/queryUserDto.dto";
+import { ObjectId } from "mongodb";
 
-@Controller({path:'users'})
-export class UsersController{
+@Controller({ path: 'users' })
+export class UsersController {
 
-    constructor(private usersService:UsersService){}
+    constructor(private usersService: UsersService) { }
+
+    /* 
+        Foi observado um comportamento nas funcionalidades dos endpoints: 
+        - No Nestjs(e no framework subjacente, que é o Express), as rotas são avaliadas em ordem sequencial,
+        ou seja, a ordem em que as rotas sao definidas no controller importam.
+        Por exemplo, foi definido dois endpoints, um genérico onde eu preciso definir um parametro id,
+        e o outro uma rota estática onde eu não defino nenhum parametro.
+        Se eu definir a rota estática depois da rota genérica(com parametro dinamico),
+        a rota estática vai acabar enviando uma requisição como o parametro passado na rota dinamica,
+        por exemplo, o NestJS envia "query" como "id" para o método findOne, e o seu código tenta
+        buscar usuário com ID "query", o que gera um erro, especialmente se estiver esperando um ObjectID.
+        Por tanto, definir rotas estáticas antes das rotas genericas(dinâmicas) para que a rota estática
+        não receba os parãmetros das rotas dinamicas.
+    */
+
+    @Get('query')
+    async queryUser(@Query() query:QueryUserDto):Promise<QueryUserDto[]> {
+        return this.usersService.queryUser(query);
+    }
 
     @Post('create')
-    async create(@Body() dataBody:CreateUserDTO ):Promise<CreateUserDTO>{
+    async create(@Body() dataBody: CreateUserDTO): Promise<CreateUserDTO> {
         return this.usersService.create(dataBody);
     }
 
@@ -18,8 +39,21 @@ export class UsersController{
         return this.usersService.getAll();
     }
 
+    @Get(':id')
+    getOne(@Param('id') _id: string) {
+        if(!ObjectId.isValid(_id)) throw new HttpException('ID Inválido!',400);
+        return this.usersService.getOne(_id);
+    }
+
     @Delete('delete/:id')
-    delete(@Param('id') id:string):Promise<object>{
-        return this.usersService.delete(id);
+    delete(@Param('id') _id: string): Promise<object> {
+        if(!ObjectId.isValid(_id)) throw new HttpException('ID Inválido!',400);
+        return this.usersService.delete(_id);
+    }
+
+    @Patch('update/:id')
+    async update(@Param('id') _id: string, @Body() data: UpdateUserDto): Promise<UpdateUserDto> {
+        if(!ObjectId.isValid(_id)) throw new HttpException('ID Inválido!',400);
+        return this.usersService.update(_id, data);
     }
 }

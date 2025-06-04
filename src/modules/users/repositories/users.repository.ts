@@ -4,12 +4,14 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDTO } from "../dtos/createUserDto.dto";
 import { ClientProxy } from "@nestjs/microservices";
+import { ObjectId } from "mongodb";
+import { UpdateUserDto } from "../dtos/updateUserDto.dto";
+import { QueryUserDto } from "../dtos/queryUserDto.dto";
 
 @Injectable()
 export class UsersRepository{
 
     constructor(
-
         //Definindo o clientProxy das configurações no módulo_
         @Inject('NOTIFICATIONS_SERVICE') client:ClientProxy,
 
@@ -57,23 +59,105 @@ export class UsersRepository{
         return this.repository.find();
     }
 
-    //Método responsável por deletar um usuário específico do banco de dados_
-    async delete(id:string):Promise<object>{
+    //Método responsável por buscar por um usuário com base no seu id, e retornar os dados desse usuário específico_
+    async getOne(_id:string):Promise<Users>{
         try{
-            const user = await this.repository.findOneBy({});
+            const objectId = new ObjectId(_id);
+
+            const user = await this.repository.findOne({
+                where: {
+                    //Quando se é utilizado o banco de dados MongoDB, o _ID é um ObjectId
+                    _id: objectId
+                }
+            });
+
+            if(!user) throw new HttpException('Usuário não encontrado na base de dados!',400);
+
+            return user;
+        }catch(error){
+            throw new HttpException(error.message || error,400);
+        }
+    }
+
+    async queryUser(firstname:string):Promise<Users[]>{
+        try{
+            if(!firstname || typeof firstname != 'string') throw new HttpException('Query Inválida!',400);
+
+            return (await this.repository.find()).filter(f => {
+                let filterData = false;
+
+                if((firstname !== undefined || firstname) && f.firstname.toLocaleLowerCase().includes(firstname.toLocaleLowerCase())) filterData = true;
+
+                return filterData;
+            });
+            
+        }catch(error){
+            throw new HttpException(error.message || error,400);
+        }
+    }
+
+    //Método responsável por deletar um usuário específico do banco de dados_
+    async delete(_id:string):Promise<object>{
+        try{
+            const objectId = new ObjectId(_id);
+            const user = await this.repository.findOne({
+                where: {
+                    _id: objectId
+                }
+            });
 
             console.log(user);
 
             if(!user) throw new HttpException('Usuário não encontrado!',HttpStatus.BAD_REQUEST);
 
-            const deleteUser = await this.repository.delete(id);
+            await this.repository.delete(_id);
 
             return {
                 status: 'success',
-                message: `Usuário ${user.firstname} deletado com sucesso!`
+                message: `Usuário ${user.firstname} deletado com sucesso!`,
+                date: new Date()
             };
         }catch(error){
             throw new HttpException(error,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    async update(_id:string, data:UpdateUserDto):Promise<UpdateUserDto>{
+        try{
+            /*
+                A forma como os dados são atualizados usando o typeorm com o mongodb é diferente,
+                Como por exemplo, com o mongodb eu não posso usar o comando:
+                const updateUser = await this.repository.update(id,data);
+                Pois ele so funciona bem com os bancos relacionais(sqlite,postgrolsql, ...),
+                mas com o mongodb ele não atualiza corretamente os dados;
+
+            */
+
+            const objectId = new ObjectId(_id);
+
+            const user = await this.repository.findOne({
+                where: {
+                    _id: objectId
+                }
+            });
+            
+            if(!user) throw new HttpException('Usuário não encontrado na base de dados!',400);
+
+            //Então será usado a propriedade merge() do repository que mescla os dados novos no usuário existente_
+            const updatedUser = this.repository.merge(user,data);
+
+            if(!updatedUser) throw new HttpException('Falha ao atualizar dados do usuário!',400);
+
+            //por fim, após mesclar os dados, irei salvar essa alteração no banco de dados_
+            const saveUpdate = await this.repository.save(updatedUser);
+
+            return saveUpdate;
+
+            //Ou seja, a abordagem de atualizar dados com o typeorm e bancos relacionais e não relacionais é diferente;
+            //O mongodb sempre vai esperar um ObjectId como id para busca no banco de dados;
+            
+        }catch(error){
+            throw new HttpException(error.message || error,400);
         }
     }
 

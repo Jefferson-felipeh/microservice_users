@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateUserDTO } from "./dtos/createUserDto.dto";
 import { UsersRepository } from "./repositories/users.repository";
 import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from "./dtos/updateUserDto.dto";
+import { QueryUserDto } from "./dtos/queryUserDto.dto";
 
 @Injectable()
 export class UsersService{
@@ -28,6 +30,31 @@ export class UsersService{
         return this.repository.getAll();
     }
 
+    async getOne(_id:string):Promise<CreateUserDTO>{
+        try{
+            if(!_id) throw new HttpException('Identificador Inválido!',400);
+            
+            const user = await this.repository.getOne(_id);
+    
+            if(!user) throw new HttpException('Usuário não encontrado!',400);
+    
+            return user;
+        }catch(error){
+            throw new HttpException(error,400);
+        }
+    }
+
+    async queryUser(query:Partial<QueryUserDto>):Promise<QueryUserDto[]>{
+       try{
+        if(!query || !query.firstname) throw new HttpException('Erro na consulta de dados',400);
+
+        return this.repository.queryUser(query.firstname);
+
+       }catch(error){
+        throw new HttpException(error.message || error,400);
+       }
+    }
+
     //Método responsavel por validar as informações fornecidas para deletar um usuário especifico com base no seu id_
     async delete(id:string):Promise<object>{
         try{
@@ -37,6 +64,16 @@ export class UsersService{
             
         }catch(error){
             throw new HttpException(error,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    async update(_id:string, data:UpdateUserDto):Promise<UpdateUserDto>{
+        try{
+            if(!_id && !data) throw new HttpException('Dados não fornecidos corretamente!',400);
+    
+            return await this.repository.update(_id,data);
+        }catch(error){
+            throw new HttpException(error.message || error,400);
         }
     }
 }

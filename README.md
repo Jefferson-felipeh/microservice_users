@@ -195,3 +195,6 @@ Arquivo dockerfile :
     E após subir a nossa imagem docker do nosso ms-users para o docker,iremos cria ro conteiner que vai rodar essa imagem_
     com o comando: 
         docker run -d -p 3030:3030 --name nome_do_container nome_daImagem_associada_ao_container
+
+    Como criamos uma imagem e um container para o nosso microservice e subimos ele no docker,
+    seria super necessário fazermos o mesmo com o banco de dados mongodb que esta sendo utilizado no microservice
