@@ -5,7 +5,7 @@ export class TypeormConfig implements TypeOrmOptionsFactory{
         return {
             type: 'mongodb',
             database: 'users_linkedin_clone',
-            url: 'mongodb://localhost:27017',
+            url: 'mongodb://localhost:27017/users_linkedin_clone',
             entities: [__dirname + '/../**/*.entity{.ts,.js}'],
             migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
             synchronize: true,
