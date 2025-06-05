@@ -6,7 +6,6 @@ import { CreateUserDTO } from "../dtos/createUserDto.dto";
 import { ClientProxy } from "@nestjs/microservices";
 import { ObjectId } from "mongodb";
 import { UpdateUserDto } from "../dtos/updateUserDto.dto";
-import { QueryUserDto } from "../dtos/queryUserDto.dto";
 
 @Injectable()
 export class UsersRepository{

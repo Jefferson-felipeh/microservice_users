@@ -1,44 +1,53 @@
-Instalação do cli do nest na aplicação_
-npm install @nestjs/cli
+## Instalação das Dependencias necessárias neste Microservice de usuários_
 
-Instalação do ORM typeorm e do banco de dados sqlite3_
-npm install @nestjs/typeorm typeorm sqlite sqlite3
+#### Instalação do cli do nest na aplicação_
+<li>npm install @nestjs/cli</li>
 
-Configurações globais da aplicação que nos permite utilização das variaveis de ambiente em toda aplicação_
-npm install @nestjs/config
+#### Instalação do ORM typeorm e do banco de dados sqlite3_
+<li>npm install @nestjs/typeorm typeorm sqlite sqlite3</li>
 
-Pacotes para validação e transformação de dados_
-npm install class-validator class-transformer
+#### Configurações globais da aplicação que nos permite utilização das variaveis de ambiente em toda aplicação_
+<li>npm install @nestjs/config</li>
 
-Documentando a api_
-npm install @nestjs/swagger
+#### Pacotes para validação e transformação de dados_
+<li>npm install class-validator class-transformer</li>
 
-Instalação da biblioeca bcrypt para hashear a senha_
-npm install bcrypt
+#### Documentando a api com swagger_
+<li>npm install @nestjs/swagger</li>
 
-Biblioteca para criar microservice_
-npm install @nestjs/microservices
+#### Instalação da biblioeca bcrypt para hashear a senha_
+<li>npm install bcrypt</li>
 
-Irei utilizar o RabbitMQ para comunicação eficiente entre os microserviços_
-npm install amqplib
+#### Dependencias e bibliotecas para criar e definir o Microservice de usuários
+<li>
+    Biblioteca para criar microservice_
+    <strong>npm install @nestjs/microservices</strong>
+</li>
+<li>
+    Irei utilizar o RabbitMQ para comunicação eficiente entre os microserviços_
+    <strong>npm install amqplib</strong>
+</li>
+<li>
+    //Foi necessário instalar a biblioteca amqp-connection-manager para funcionamento do microservice_
+    <strong>npm install amqp-connection-manager</strong>
+</li>
 
-//Foi necessário instalar a biblioteca amqp-connection-manager para funcionamento do microservice_
-npm install amqp-connection-manager
+<hr/>
 
-----------------------------------------------------------------------------------
-Estrutura dos módulos de usuários_
-Dados Básicos:
+### Estrutura dos módulos de usuários_
+<li><strong>Dados Básicos:</strong></li>
     id, firstname, lastname, email password, cep, age, createdAt, updatedAt, deletedAt
 
-Dados do Perfil: 
+<li><strong>Dados do Perfil:</strong></li>
     headline, about, location, profile_picture, banner_image, skills, experience, education
 
-Conexões e Interações:
+<li><strong>Conexões e Interações:</string></li>
     connections, followers, post, likes, comments
 
-Segurança e Autenticação:
+<li><strong>Segurança e Autenticação:</strong></li>
     role, is_verified, auth_provider
---------------------------------------------------------------------------------------------------------------
+
+<hr/>
 
 Entidades Separadas:
 -> Cadastro de Usuário: Entidade central e básica para cadastrar as informações do usuário;
@@ -122,13 +131,17 @@ Microserviços para a categoria Usuário_
     auth_provider:[]
 --------------------------------------------------------------------------------------------------------------
 
+<p>
 O módulo de usuário será o responsável por criar um novo usuário, e por enviar uma série de eventos ou menságens a outros microservices,
 logo o Users será o Producer, aquele que envia uma menságem, informação ou evento para os consumer, os que vão consumir esses eventos.
+</p>
+<p>
 O broker utilizado será o rabbitmq, que será o que vai receber a menságem enviada pelo producer(users) e a enviará para o consumer(demais microservices);
+</p>
 
-Logo, o producer precisará de uma determinada configuração:
+##### Logo, o producer precisará de uma determinada configuração:
 
-O users terá duas configurações para se tornar um microservice, primeiro, no User.Module.ts,será necessário fazer essa configuração:
+O users terá duas configurações para se tornar um microservice, primeiro, <strong>no User.Module.ts,será necessário fazer essa configuração</strong>:
 ClientsModules([
     {
         //Nome do cliente/microservice/consumer_
@@ -146,9 +159,9 @@ ClientsModules([
     }
 ]);
 
-Após isso, preciso criar o cliente proxy no próprio repositório, e emitir um evento ao consumer quando crio um novo usuário, por exemplo, dessa forma: 
+<p>Após isso, preciso criar o cliente proxy no próprio repositório, e emitir um evento ao consumer quando crio um novo usuário, por exemplo, dessa forma:</p>
 
-Dentro do repository do módulo users: 
+###### Dentro do repository do módulo users: 
 constructor( @Inject('NOTIFICATIONS_SERVICE') client:Clientproxy){}
 
 E dentro do método de criar um novo usuário, ao criar o usuário, eu posso enviar um evento ao consumer com os dados do usuário criado usando esse clientProxy:
@@ -164,7 +177,7 @@ de conectar nossos microservices ao docker, e utiliza-lo como broker na nossa ap
 
 Após criar a imagem docker do rabbitmq e o seu container, iremos criar a imagem dos nossos microservices e os seus respectivos conteiner_
 
- Para isso, dentro de cada microservice, iremos criar um arquivo dockerfile:
+Para isso, dentro de cada microservice, iremos criar um arquivo dockerfile:
 Arquivo dockerfile :
     #Imagem docker para criar um container que irá rodar essa aplicação no docker_
 
