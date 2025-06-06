@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  //Validação com os pipes de forma global_
   app.useGlobalPipes(new ValidationPipe({ transform: false }));
 
   //Configuração do swagger_

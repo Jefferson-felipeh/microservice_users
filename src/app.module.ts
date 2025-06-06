@@ -11,7 +11,7 @@ import { TypeOrmConfigService } from 'src/database/typeorm-config.service';
       isGlobal: true,//Tornando as variaveis do arquivo .env globais para toda aplicação;
       envFilePath: ['.env'],
       ignoreEnvFile: false,
-      //Esse é o namespace(espaço nomeado), que agrupa e organiza variaveis do .env_
+      //Esse é o namespace(espaço nomeado), que agrupa e organiza variaveis relacionadas do .env_
       load: [databaseConfig],
     }),
     TypeOrmModule.forRootAsync({//Configurações do typeorm_
