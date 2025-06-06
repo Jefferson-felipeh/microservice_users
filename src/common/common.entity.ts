@@ -1,11 +1,9 @@
-import { ObjectId } from "mongodb";
-import { CreateDateColumn, DeleteDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
+import { CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('common-entity')
 export class CommonEntity{
-    //O @ObjectIdColumn() é um decorador espcial do typeorm para indicar que esse campo é o _id do mongoDB_
-    @ObjectIdColumn()
-    _id:ObjectId
+    @PrimaryGeneratedColumn('uuid')
+    id:string
 
     @CreateDateColumn()
     created_at:Date

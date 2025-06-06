@@ -30,11 +30,11 @@ export class UsersService{
         return this.repository.getAll();
     }
 
-    async getOne(_id:string):Promise<CreateUserDTO>{
+    async getOne(id:string):Promise<CreateUserDTO>{
         try{
-            if(!_id) throw new HttpException('Identificador Inválido!',400);
+            if(!id) throw new HttpException('Identificador Inválido!',400);
             
-            const user = await this.repository.getOne(_id);
+            const user = await this.repository.getOne(id);
     
             if(!user) throw new HttpException('Usuário não encontrado!',400);
     
@@ -67,11 +67,11 @@ export class UsersService{
         }
     }
 
-    async update(_id:string, data:UpdateUserDto):Promise<UpdateUserDto>{
+    async update(id:string, data:UpdateUserDto):Promise<UpdateUserDto>{
         try{
-            if(!_id && !data) throw new HttpException('Dados não fornecidos corretamente!',400);
+            if(!id && !data) throw new HttpException('Dados não fornecidos corretamente!',400);
     
-            return await this.repository.update(_id,data);
+            return await this.repository.update(id,data);
         }catch(error){
             throw new HttpException(error.message || error,400);
         }

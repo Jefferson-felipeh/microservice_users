@@ -40,20 +40,20 @@ export class UsersController {
     }
 
     @Get(':id')
-    getOne(@Param('id') _id: string) {
-        if(!ObjectId.isValid(_id)) throw new HttpException('ID Inválido!',400);
-        return this.usersService.getOne(_id);
+    getOne(@Param('id') id: string) {
+        if(!id) throw new HttpException('ID Inválido!',400);
+        return this.usersService.getOne(id);
     }
 
     @Delete('delete/:id')
-    delete(@Param('id') _id: string): Promise<object> {
-        if(!ObjectId.isValid(_id)) throw new HttpException('ID Inválido!',400);
-        return this.usersService.delete(_id);
+    delete(@Param('id') id: string): Promise<object> {
+        if(id) throw new HttpException('ID Inválido!',400);
+        return this.usersService.delete(id);
     }
 
     @Patch('update/:id')
-    async update(@Param('id') _id: string, @Body() data: UpdateUserDto): Promise<UpdateUserDto> {
-        if(!ObjectId.isValid(_id)) throw new HttpException('ID Inválido!',400);
-        return this.usersService.update(_id, data);
+    async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<UpdateUserDto> {
+        if(!id) throw new HttpException('ID Inválido!',400);
+        return this.usersService.update(id, data);
     }
 }

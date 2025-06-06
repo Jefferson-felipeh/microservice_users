@@ -1,21 +1,24 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeormConfig } from 'database/typeorm.config';
 import { groupModules } from './modules';
-
+import databaseConfig from './common/config/database.config';
+import { TypeOrmConfigService } from 'src/database/typeorm-config.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,//Tornando as variaveis do arquivo .env globais para toda aplicação;
-      load: [],
-      envFilePath: '.env'
+      envFilePath: ['.env'],
+      ignoreEnvFile: false,
+      //Esse é o namespace(espaço nomeado), que agrupa e organiza variaveis do .env_
+      load: [databaseConfig],
     }),
     TypeOrmModule.forRootAsync({//Configurações do typeorm_
-      useClass: TypeormConfig
+      useClass: TypeOrmConfigService,
     }),
-    ...groupModules
+    ...groupModules,
   ],
+  providers: [TypeOrmConfigService]
 })
 export class AppModule {}

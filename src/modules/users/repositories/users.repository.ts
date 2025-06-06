@@ -4,7 +4,6 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDTO } from "../dtos/createUserDto.dto";
 import { ClientProxy } from "@nestjs/microservices";
-import { ObjectId } from "mongodb";
 import { UpdateUserDto } from "../dtos/updateUserDto.dto";
 
 @Injectable()
@@ -12,7 +11,7 @@ export class UsersRepository{
 
     constructor(
         //Definindo o clientProxy das configurações no módulo_
-        @Inject('NOTIFICATIONS_SERVICE') client:ClientProxy,
+        @Inject('NOTIFICATIONS_SERVICE') private client:ClientProxy,
 
         //Injetando a entidade User no repositório para ter acesso as suas propriedades e a toda a sua estrutura_
         @InjectRepository(Users)
@@ -45,6 +44,10 @@ export class UsersRepository{
             //Caso dé erro ao salvar, lança um exceção_
             if(!saveUser) throw new HttpException('error ao salvar usuário!',HttpStatus.BAD_REQUEST);
 
+            //Após definir o client proxy no controller, após salvar o usuário no banco, será enviado um evento contendo os dados do
+            //usuário criado para o consumer, que será o microservice que receberá esses dados atravez da fila definida no seu endpoint_
+            this.client.emit('fila',saveUser);
+
             //Por fim, caso tudo de certo, retorna o usuário criado_
             return saveUser;
 
@@ -59,16 +62,9 @@ export class UsersRepository{
     }
 
     //Método responsável por buscar por um usuário com base no seu id, e retornar os dados desse usuário específico_
-    async getOne(_id:string):Promise<Users>{
+    async getOne(id:string):Promise<Users>{
         try{
-            const objectId = new ObjectId(_id);
-
-            const user = await this.repository.findOne({
-                where: {
-                    //Quando se é utilizado o banco de dados MongoDB, o _ID é um ObjectId
-                    _id: objectId
-                }
-            });
+            const user = await this.repository.findOneBy({id});
 
             if(!user) throw new HttpException('Usuário não encontrado na base de dados!',400);
 
@@ -96,20 +92,15 @@ export class UsersRepository{
     }
 
     //Método responsável por deletar um usuário específico do banco de dados_
-    async delete(_id:string):Promise<object>{
+    async delete(id:string):Promise<object>{
         try{
-            const objectId = new ObjectId(_id);
-            const user = await this.repository.findOne({
-                where: {
-                    _id: objectId
-                }
-            });
+            const user = await this.repository.findOneBy({id});
 
             console.log(user);
 
             if(!user) throw new HttpException('Usuário não encontrado!',HttpStatus.BAD_REQUEST);
 
-            await this.repository.delete(_id);
+            await this.repository.delete(id);
 
             return {
                 status: 'success',
@@ -121,7 +112,7 @@ export class UsersRepository{
         }
     }
 
-    async update(_id:string, data:UpdateUserDto):Promise<UpdateUserDto>{
+    async update(id:string, data:UpdateUserDto):Promise<UpdateUserDto>{
         try{
             /*
                 A forma como os dados são atualizados usando o typeorm com o mongodb é diferente,
@@ -132,13 +123,7 @@ export class UsersRepository{
 
             */
 
-            const objectId = new ObjectId(_id);
-
-            const user = await this.repository.findOne({
-                where: {
-                    _id: objectId
-                }
-            });
+            const user = await this.repository.findOneBy({id});
             
             if(!user) throw new HttpException('Usuário não encontrado na base de dados!',400);
 

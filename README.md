@@ -28,9 +28,12 @@
     <strong>npm install amqplib</strong>
 </li>
 <li>
-    //Foi necessário instalar a biblioteca amqp-connection-manager para funcionamento do microservice_
+    <p>Foi necessário instalar a biblioteca amqp-connection-manager para funcionamento do microservice_</p>
     <strong>npm install amqp-connection-manager</strong>
 </li>
+
+O banco de dados utilizado nesse microservice é o PostgreSQL, para isso precisei instalar:
+npm install pg
 
 <hr/>
 
@@ -209,5 +212,5 @@ Arquivo dockerfile :
     com o comando: 
         docker run -d -p 3030:3030 --name nome_do_container nome_daImagem_associada_ao_container
 
-    Como criamos uma imagem e um container para o nosso microservice e subimos ele no docker,
-    seria super necessário fazermos o mesmo com o banco de dados mongodb que esta sendo utilizado no microservice
+O banco de dados utilizado é o PostgreSQL, e após subir o meu microservice para um container dockr, eu preciso de igual forma subir o postgres 
+para o docker
