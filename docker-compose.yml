@@ -1,24 +1,31 @@
 version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:6
-    container_name: mongodb
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: microservice_users
+      POSTGRES_USER: jeffersons
+      POSTGRES_PASSWORD: JFS0211@ti  
     ports:
-      - "27017:27017"
+      - "5432:5432"
     volumes:
-      - mongo_data:/data/db
+      - postgres_data:/var/lib/postgresql/data
 
   nestjs:
-    build:
-      context: .
-    container_name: mongoDB_microservice
+    build: .
+    container_name: users_microservice
     ports:
       - "3030:3030"
     depends_on:
-      - mongodb
+      - postgres
     environment:
-      MONGO_URI: mongodb://mongodb:27017/users_linkedin_clone
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: jeffersons         
+      DB_PASSWORD: JFS0211@ti         
+      DB_NAME: microservice_users
 
 volumes:
-  mongo_data:
+  postgres_data:
