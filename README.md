@@ -213,4 +213,8 @@ Arquivo dockerfile :
         docker run -d -p 3030:3030 --name nome_do_container nome_daImagem_associada_ao_container
 
 O banco de dados utilizado é o PostgreSQL, e após subir o meu microservice para um container dockr, eu preciso de igual forma subir o postgres 
-para o docker
+para o docker usando o docker-compose.yml
+
+<hr/>
+
+## Fluxo de Vida de uma requisição no nestjs_

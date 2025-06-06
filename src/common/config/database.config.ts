@@ -9,6 +9,7 @@ import { registerAs } from '@nestjs/config';
 
 export default registerAs('database', () => (
   {
+    //Agrupando variáveis relacionadas as configurações do typeorm_
     type: process.env.DB_TYPE,
     nome: process.env.DB_NAME,
     host: process.env.DB_HOST,
