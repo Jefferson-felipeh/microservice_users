@@ -29,9 +29,8 @@ async function bootstrap() {
     .setDescription('Microserviço de usuários')
     .setVersion('1.0')
     .addBearerAuth()
-    .setTitle('MS')
+    .setTitle('Microservice_Users')
     .addTag('MS')
-    .addServer('MS')
     .build();
 
   const document = SwaggerModule.createDocument(app,options);

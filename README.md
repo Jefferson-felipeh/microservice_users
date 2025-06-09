@@ -285,6 +285,10 @@ CREATE DATABASE microservice_users;
 CREATE TABLE users (colunas);
 etc...
 </p>
+<p>No arquivo docker-compose.yml eu consigo gerenciar as imagens e os containers docker da minha aplicação,
+ou seja, nele eu consigo criar mais de uma imagem e mais de um container e executar todos no mesmo comando: 
+<strong>dokcer-compose up -d</strong>
+</p>
 
 <hr/>
 

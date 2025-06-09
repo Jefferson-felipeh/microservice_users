@@ -1,9 +1,8 @@
-import { Body, Controller, Delete, Get, HttpException, Param, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Patch, Post, Query } from "@nestjs/common";
 import { CreateUserDTO } from "./dtos/createUserDto.dto";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dtos/updateUserDto.dto";
 import { QueryUserDto } from "./dtos/queryUserDto.dto";
-import { ObjectId } from "mongodb";
 
 @Controller({ path: 'users' })
 export class UsersController {
@@ -24,11 +23,12 @@ export class UsersController {
         não receba os parãmetros das rotas dinamicas.
     */
 
-    @Get('query')
-    async queryUser(@Query() query:QueryUserDto):Promise<QueryUserDto[]> {
-        return this.usersService.queryUser(query);
+   @Get('query')
+   async queryUser(@Query() query:QueryUserDto):Promise<QueryUserDto[]> {
+       return this.usersService.queryUser(query);
     }
-
+    
+    @HttpCode(200)
     @Post('create')
     async create(@Body() dataBody: CreateUserDTO): Promise<CreateUserDTO> {
         return this.usersService.create(dataBody);
@@ -51,6 +51,7 @@ export class UsersController {
         return this.usersService.delete(id);
     }
 
+    @HttpCode(200)
     @Patch('update/:id')
     async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<UpdateUserDto> {
         if(!id) throw new HttpException('ID Inválido!',400);

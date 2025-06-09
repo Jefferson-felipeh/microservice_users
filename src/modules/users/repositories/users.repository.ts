@@ -30,7 +30,7 @@ export class UsersRepository{
 
             //Caso não exista, ele cria a estrutura da coluna no banco de dados com a mesma estrutura do objeto fornecido pelo usuário,
             //Mas que corresponda a mesma estrutura especificada na entidade_
-            const createUser = this.repository.create(dataBody);
+            const createUser = this.repository.create(dataBody);//Esse método não é assincrono, uma vez que ele so cria os parametros;
 
             //Caso de erro ao salvar a estrutura, será retornado uma exceção_
             if(!createUser) throw new HttpException('error ao criar usuário!',HttpStatus.BAD_REQUEST);
