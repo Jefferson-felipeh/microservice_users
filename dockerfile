@@ -1,7 +1,7 @@
 #Imagem docker para criar um container que irá rodar essa aplicação no docker_
 
 #Usar uma imagem base do Node.js_
-#o node tem que estar na mesma versão em que a aplicação foi construida_
+#node tem que estar na mesma versão em que a aplicação foi construida_</p>
 FROM node:20
 
 #Definir diretório de tabalho dentro do container

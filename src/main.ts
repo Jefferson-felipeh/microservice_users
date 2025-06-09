@@ -7,7 +7,21 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   //Validação com os pipes de forma global_
-  app.useGlobalPipes(new ValidationPipe({ transform: false }));
+  app.useGlobalPipes(new ValidationPipe({
+    //Podemos passar uma série de propriedades globais para as validações dos dados_
+
+    //Essa propriedade envia na requisição apenas as propriedades que são esperadas, que são aquelas definidas nos dtos_
+    whitelist: true,
+
+    //Essa propriedade recusa as requisições que possue propriedades indesejadas, aquelas que não estao presentes no dto,
+    //como por exemplo, no dto não tem a propriedade id, caso eu passe esa propriedade na requisição, ele recusa a requisição ate que eu tire da requisição_
+    //Portanto, recusa a requisição caso eu passe algum campo que não exista nos dtos_
+    forbidNonWhitelisted: true,
+
+    //A propriedade transform captura os dados da requisição, e já faz a mudança da tipagem dos dados, por exemplo, se o DTO espera um campo com o 
+    //tipo string, o transform faz essa mudança automaticamente tanto nos dtos quanto nos parametos_
+    transform: true,
+  }));
 
   //Configuração do swagger_
   const options = new DocumentBuilder()

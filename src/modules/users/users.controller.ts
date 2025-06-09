@@ -46,8 +46,8 @@ export class UsersController {
     }
 
     @Delete('delete/:id')
-    delete(@Param('id') id: string): Promise<object> {
-        if(id) throw new HttpException('ID Inválido!',400);
+    async delete(@Param('id') id: string): Promise<object> {
+        if(!id) throw new HttpException('ID Inválido!',400);
         return this.usersService.delete(id);
     }
 

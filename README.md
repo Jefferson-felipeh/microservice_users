@@ -32,8 +32,10 @@
     <strong>npm install amqp-connection-manager</strong>
 </li>
 
-O banco de dados utilizado nesse microservice é o PostgreSQL, para isso precisei instalar:
-npm install pg
+<li>
+    O banco de dados utilizado nesse microservice é o PostgreSQL, para isso precisei instalar:
+    <strong>npm install pg</strong>
+</li>
 
 <hr/>
 
@@ -136,10 +138,11 @@ Microserviços para a categoria Usuário_
 
 <p>
 O módulo de usuário será o responsável por criar um novo usuário, e por enviar uma série de eventos ou menságens a outros microservices,
-logo o Users será o Producer, aquele que envia uma menságem, informação ou evento para os consumer, os que vão consumir esses eventos.
+logo o Users será o Producer, aquele que envia uma mensagem, informação ou evento para os consumer, os que vão consumir esses eventos.
 </p>
 <p>
-O broker utilizado será o rabbitmq, que será o que vai receber a menságem enviada pelo producer(users) e a enviará para o consumer(demais microservices);
+O broker utilizado será o rabbitmq, que será o que vai receber a menságem enviada pelo producer(users) 
+e a enviará para o consumer(demais microservices);
 </p>
 
 ##### Logo, o producer precisará de uma determinada configuração:
@@ -175,12 +178,22 @@ create(...){
     //Podemos definir o nome da fila do rabbitmq como desejar, porem no consumer, eu tenho que esta escutando essa final no controller;
 }
 
-Para utilizar o rabbitmq em um docker interno, é preciso criar uma imagem docker do rabbitmq e deixa-la rodando no docker, para so assim termos a possibilidade
-de conectar nossos microservices ao docker, e utiliza-lo como broker na nossa aplicação;
+<hr>
 
+## 1. Criar a Imagem docker do RabbitMQ(broker) e os eu container:
+
+<p>
+Para utilizar o rabbitmq em um docker interno, é preciso criar uma imagem docker do rabbitmq e deixa-la rodando no docker, para so assim termos 
+a possibilidade de conectar nossos microservices ao docker, e utiliza-lo como broker na nossa aplicação;
+</p>
+
+## 2. Criar as Imagens docker dos Microservices e os seus containers:
+
+<p>
 Após criar a imagem docker do rabbitmq e o seu container, iremos criar a imagem dos nossos microservices e os seus respectivos conteiner_
+</p>
 
-Para isso, dentro de cada microservice, iremos criar um arquivo dockerfile:
+<p>Para isso, dentro de cada microservice, iremos criar um arquivo dockerfile:</p>
 Arquivo dockerfile :
     #Imagem docker para criar um container que irá rodar essa aplicação no docker_
 
@@ -212,9 +225,65 @@ Arquivo dockerfile :
     com o comando: 
         docker run -d -p 3030:3030 --name nome_do_container nome_daImagem_associada_ao_container
 
-O banco de dados utilizado é o PostgreSQL, e após subir o meu microservice para um container dockr, eu preciso de igual forma subir o postgres 
-para o docker usando o docker-compose.yml
+    Usar uma imagem base do Node.js, assim ficará a imagem do microservice_
+    o node tem que estar na mesma versão em que a aplicação foi construida_
+    FROM node:20
+
+    Definir diretório de tabalho dentro do container
+    WORKDIR /app
+
+    Copiar arquivos essenciais para instalar dependencias_
+    COPY package.json package-lock.json ./
+
+    Instalar dependencias_
+    RUN npm install
+
+    Copiar o restante do código da aplicação_
+    COPY . .
+
+    Expor a porta do nestjs_
+    EXPOSE 3030
+
+    CMD ["npx","nest","start"]
 
 <hr/>
 
-## Fluxo de Vida de uma requisição no nestjs_
+#### Após subir a imagem docker tanto do RabbitMQ quando do próprio microsevice, irei criar a imagem do postgres_
+<P>Para subir um container para o postgres, será necessário criar o arquivo docker-compose.yml_</p>
+<p>Nesse arquivo irei criar a imagem do postgres para rodar em um container docker_</p>
+<p>Ate então o postgres estava sendo rodado com o PostgreSQL Server, ou seja, localmente na máquina.</p>
+<p>Entratando, ao subir o nosso microservice para um container docker, será necessário subir o nosso banco de dados.</p>
+<p>Para isso, no arquivo docker-compose.yml contruiremos a imagem assim: </p>
+
+services:
+  postgres:
+    image: postgres:15 //Versão da imagem do postgres;
+    container_name: postgres
+    environment:
+      POSTGRES_DB: nome do banco de dados
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: 'senha entre aspas';
+    ports:
+      - "5432:5432" //Porta padrão do postgres;
+    volumes:
+      - postgres_data:/var/lib/postgresql/data //Diretório padrçao do postgres;
+
+volumes:
+  postgres_data:
+
+<p>Para subir, é necessáio verificar se já não exista algum container rodando que tenha a mesma porta do postres, se sim dará erro ao ser executado.</p>
+<p>Para subir  imagem e o container, executa o comando: <strong>docker-compose up -d</strong> e no docker desktop basta iniciar a execução do container.</p>
+<p>
+Após subirmos a imagem docker do postgres, e ao tentarmos fazer requisição no microservice para o postgres, talvés de erro
+de que tal banco e tal tabela não foi criada.</p>
+
+<p>Mas caso isso acontecer, basta executar o comando:
+<strong>docker exec -it nome_do_container psql -U nome_do_usuário -d postgres</strong>
+Com esse comando no terminal, voce consegue acessar o container docker, ou 'entrar' no container pelo terminal.
+E lá voce pode executar comandos sql, como criar tabelas, criar banco de dados, e etc, como: 
+CREATE DATABASE microservice_users; 
+CREATE TABLE users (colunas);
+etc...
+</p>
+
+<hr/>
