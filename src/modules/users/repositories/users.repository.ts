@@ -151,7 +151,7 @@ export class UsersRepository{
 
         const isEmail = await this.repository.findOneBy({email});
 
-        if(isEmail) throw new HttpException('Email já já cadastrado!',HttpStatus.BAD_REQUEST);
+        if(isEmail) throw new HttpException('Email já cadastrado!',HttpStatus.BAD_REQUEST);
 
         return false;
     }
