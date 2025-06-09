@@ -287,3 +287,21 @@ etc...
 </p>
 
 <hr/>
+
+
+### Principais comandos docker_
+<li>
+    Executar um comando dentro de um container docker:
+    <strong>docker exec -it nome_do_container psql -U nome_do_Usuário -d postgres</strong>
+</li>
+
+<li>
+    Para um Container docker, finalizando o container sem remove-lo:
+    <strong>docker stop nome_do_container</strong>
+</li>
+
+<li>
+    Listar container ativos_
+    <strong>docker ps</strong>
+    <strong>docker-compose ps</strong>
+</li>
