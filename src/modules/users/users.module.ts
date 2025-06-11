@@ -5,6 +5,8 @@ import { UsersService } from "./users.service";
 import { Users } from "./entities/Users.entity";
 import { UsersRepository } from "./repositories/users.repository";
 import { ClientsModule, Transport } from "@nestjs/microservices";
+import { JWTStrategy } from "./strategys/jwtStrategy.strategy";
+import { JwtGuard } from "./guards/jwt.guard";
 
 @Module({
     imports: [
@@ -31,6 +33,11 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
         ])
     ],
     controllers: [UsersController],
-    providers: [UsersService, UsersRepository]
+    providers: [
+        UsersService, 
+        UsersRepository,
+        JwtGuard,
+        JWTStrategy
+    ]
 })
 export class UsersModule{}

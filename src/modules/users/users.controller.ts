@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { CreateUserDTO } from "./dtos/createUserDto.dto";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dtos/updateUserDto.dto";
 import { QueryUserDto } from "./dtos/queryUserDto.dto";
 import { MessagePattern, Payload } from "@nestjs/microservices";
-import { Observable, from } from "rxjs";
+import { JwtGuard } from "./guards/jwt.guard";
 
 @Controller({ path: 'users' })
 export class UsersController {
@@ -25,6 +25,7 @@ export class UsersController {
         não receba os parãmetros das rotas dinamicas.
     */
 
+    @UseGuards(JwtGuard)
    @Get('query')
     async queryUser(@Query() query:QueryUserDto): Promise<QueryUserDto[]> {
        return this.usersService.queryUser(query);
@@ -36,23 +37,27 @@ export class UsersController {
         return this.usersService.create(dataBody);
     }
 
+    @UseGuards(JwtGuard)
     @Get('list')
     getAll(){
         return this.usersService.getAll();
     }
 
+    @UseGuards(JwtGuard)
     @Get(':id')
     getOne(@Param('id') id: string) {
         if(!id) throw new HttpException('ID Inválido!',400);
         return this.usersService.getOne(id);
     }
 
+    @UseGuards(JwtGuard)
     @Delete('delete/:id')
     async delete(@Param('id') id: string): Promise<object> {
         if(!id) throw new HttpException('ID Inválido!',400);
         return this.usersService.delete(id);
     }
 
+    @UseGuards(JwtGuard)
     @HttpCode(200)
     @Patch('update/:id')
     async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<UpdateUserDto> {

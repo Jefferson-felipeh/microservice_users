@@ -315,3 +315,35 @@ ou seja, nele eu consigo criar mais de uma imagem e mais de um container e execu
     <strong>docker ps</strong>
     <strong>docker-compose ps</strong>
 </li>
+
+<hr/>
+
+Foi necessário instalar o JWT para criar uma estratégia de validação de autorização_
+npm install @nestjs/passport
+npm install @nestjs/jwt passport-jwt
+
+Foi criado o JwtGuard, para ser adicionado nos endpoints do microservice users, para que somente usuários autorizado
+possam ter autorização de acesso, dessa forma, no arquivo jwtGuard.guard.ts: 
+@Injectable()
+export class JwtGuard extendes AuthGuard('jwt'){}
+
+E foi criado a estratégia para validação dos tokens fornecidos no header de cada requisição:
+@Injectable()
+export class JwtStrategy extendes PassportStrategy(Strategy){
+    constructor(){
+        super({
+            //Aqui passando tres propriedades principais_
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),//indica de onde o token será extraido na requisição(do header);
+            ignoreExpiration: false,//Não ignora tokens que ja expirarao;
+            secretOrKey:'jeffersons',//Vhave secreta;
+        });
+    }
+
+    async validate(payload: {user:string,sub:string}){
+        //Aqui dentro onde conrtuo a lógica de validação dos tokens_
+        return {
+            user:payload.user,
+            sub:payload.sub
+        }
+    }
+}
