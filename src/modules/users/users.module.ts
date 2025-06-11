@@ -13,15 +13,15 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
         ClientsModule.register([
             {
                 //Name do clientProxy_
-                name: 'NOTIFICATIONS_SERVICE',
+                name: 'AUTHORIZATION_SERVICE',
                 //Transport_
                 transport: Transport.RMQ,
                 //options
                 options: {
                     //Url do endereço do broker robbitmq_
-                    urls: ['amqp://guest:guest@rabbitmq:5672'],
+                    urls: ['amqp://guest:guest@localhost:5672'],
                     //Nome da fila no broker_
-                    queue: 'notifications_queue',
+                    queue: 'authorizations_queue',
                     queueOptions: {
                         durable: true,
                     }
