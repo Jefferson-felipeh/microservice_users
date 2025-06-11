@@ -54,6 +54,12 @@
 
 <hr/>
 
+Quando estou lidando com microservices no nestjs,o ideal é que os métodos do service e repository retorne uma observable,
+e não uma promise, especialmente quando usa a biblioteca @nestjs/microservices com transportes baseados em mensagem como
+RabbitMQ.
+
+<hr/>
+
 Entidades Separadas:
 -> Cadastro de Usuário: Entidade central e básica para cadastrar as informações do usuário;
 -> Connections: Relaciona os usuários conectados entre si;

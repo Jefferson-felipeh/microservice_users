@@ -8,10 +8,9 @@ import { UpdateUserDto } from "../dtos/updateUserDto.dto";
 
 @Injectable()
 export class UsersRepository{
-
     constructor(
         //Definindo o clientProxy das configurações no módulo_
-        @Inject('NOTIFICATIONS_SERVICE') private client:ClientProxy,
+        @Inject('AUTHORIZATION_SERVICE') private client:ClientProxy,
 
         //Injetando a entidade User no repositório para ter acesso as suas propriedades e a toda a sua estrutura_
         @InjectRepository(Users)
@@ -46,7 +45,7 @@ export class UsersRepository{
 
             //Após definir o client proxy no controller, após salvar o usuário no banco, será enviado um evento contendo os dados do
             //usuário criado para o consumer, que será o microservice que receberá esses dados atravez da fila definida no seu endpoint_
-            this.client.emit('fila',saveUser);
+            this.client.emit('ms_auth',saveUser);
 
             //Por fim, caso tudo de certo, retorna o usuário criado_
             return saveUser;
@@ -154,5 +153,15 @@ export class UsersRepository{
         if(isEmail) throw new HttpException('Email já cadastrado!',HttpStatus.BAD_REQUEST);
 
         return false;
+    }
+
+    async me(email:string):Promise<Users>{
+        if(!email) throw new HttpException('erro no email',400);
+
+        const user = await this.repository.findOneBy({email});
+        
+        if(!user) throw new HttpException('Usuário não encontrado!',400);
+
+        return user;
     }
 }

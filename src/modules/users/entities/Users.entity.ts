@@ -12,7 +12,7 @@ export class Users extends CommonEntity{
 
     //Segundo nome do usuário_
     @Index('LASTNAME')
-    @Column({ name: 'LASTNAME', type: 'varchar', length: 2000, nullable: true, default: ''})
+    @Column({ name: 'LASTNAME', type: 'varchar', length: 2000, nullable: false, default: ''})
     lastname:string
 
     //Email do usuário_

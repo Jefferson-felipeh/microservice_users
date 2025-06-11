@@ -3,12 +3,23 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/all-exceptions.filter';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://guest:guest@localhost:5672'],
+      queue: 'ms-users',
+      queueOptions: {
+        durable: true
+      }
+    }
+  });
 
+  // app.useGlobalFilters(new HttpExceptionFilter());
   //Validação com os pipes de forma global_
   app.useGlobalPipes(new ValidationPipe({
     //Podemos passar uma série de propriedades globais para as validações dos dados_
@@ -28,7 +39,7 @@ async function bootstrap() {
 
   //Configuração do swagger_
   const options = new DocumentBuilder()
-  .setTitle('Microservice Users')
+    .setTitle('Microservice Users')
     .setDescription('Microserviço de usuários')
     .setVersion('1.0')
     .addBearerAuth()
@@ -36,8 +47,8 @@ async function bootstrap() {
     .addTag('MS')
     .build();
 
-  const document = SwaggerModule.createDocument(app,options);
-  SwaggerModule.setup('docs',app,document);
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('docs', app, document);
 
   await app.startAllMicroservices();
   await app.listen(3030);

@@ -3,6 +3,8 @@ import { CreateUserDTO } from "./dtos/createUserDto.dto";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dtos/updateUserDto.dto";
 import { QueryUserDto } from "./dtos/queryUserDto.dto";
+import { MessagePattern, Payload } from "@nestjs/microservices";
+import { Observable, from } from "rxjs";
 
 @Controller({ path: 'users' })
 export class UsersController {
@@ -24,7 +26,7 @@ export class UsersController {
     */
 
    @Get('query')
-   async queryUser(@Query() query:QueryUserDto):Promise<QueryUserDto[]> {
+    async queryUser(@Query() query:QueryUserDto): Promise<QueryUserDto[]> {
        return this.usersService.queryUser(query);
     }
     
@@ -56,5 +58,10 @@ export class UsersController {
     async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<UpdateUserDto> {
         if(!id) throw new HttpException('ID Inválido!',400);
         return this.usersService.update(id, data);
+    }
+
+    @MessagePattern('find-user-by-email')
+    async findUserByEmail(@Payload() email:string):Promise<CreateUserDTO>{
+        return this.usersService.findUserByEmail(email);
     }
 }
