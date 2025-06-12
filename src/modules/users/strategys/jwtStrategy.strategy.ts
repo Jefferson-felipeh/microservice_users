@@ -12,6 +12,7 @@ export class JWTStrategy extends PassportStrategy(Strategy){
         });
     }
 
+    //Estratégia JWT adicionada aos endpoints para autorização de usuários atraves de um token válido fornecido_
     async validate(payload:{user:string,sub:string, exp}){
         if(!payload.user || !payload.sub) throw new UnauthorizedException();
         
