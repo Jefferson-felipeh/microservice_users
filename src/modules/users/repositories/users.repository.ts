@@ -10,11 +10,13 @@ import { UpdateUserDto } from "../dtos/updateUserDto.dto";
 export class UsersRepository{
     constructor(
         //Definindo o clientProxy das configurações no módulo_
-        @Inject('AUTHORIZATION_SERVICE') private client:ClientProxy,
+        @Inject('AUTHORIZATION_SERVICE') private client_auth:ClientProxy,
+
+
+        @Inject('ROLES_SERVICE') private client_role:ClientProxy,
 
         //Injetando a entidade User no repositório para ter acesso as suas propriedades e a toda a sua estrutura_
-        @InjectRepository(Users)
-        private repository:Repository<Users>
+        @InjectRepository(Users) private repository:Repository<Users>
     ){}
 
     //Método responsável por criar um novo usuário no banco de dados mongodb_
@@ -45,7 +47,10 @@ export class UsersRepository{
 
             //Após definir o client proxy no controller, após salvar o usuário no banco, será enviado um evento contendo os dados do
             //usuário criado para o consumer, que será o microservice que receberá esses dados atravez da fila definida no seu endpoint_
-            this.client.emit('ms_auth',saveUser);
+            this.client_auth.emit('ms_auth_pattern',saveUser);
+
+            //Emitindo dados para o microservice de roles_
+            this.client_role.emit('ms_roles_pattern',saveUser.id);
 
             //Por fim, caso tudo de certo, retorna o usuário criado_
             return saveUser;
@@ -95,11 +100,11 @@ export class UsersRepository{
         try{
             const user = await this.repository.findOneBy({id});
 
-            console.log(user);
-
             if(!user) throw new HttpException('Usuário não encontrado!',HttpStatus.BAD_REQUEST);
 
             await this.repository.delete(id);
+
+            this.client_role.emit('role_delete',id);
 
             return {
                 status: 'success',

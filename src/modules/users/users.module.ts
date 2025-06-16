@@ -12,6 +12,7 @@ import { JwtGuard } from "./guards/jwt.guard";
     imports: [
         TypeOrmModule.forFeature([Users]),//Especificando a entidade principal desse módulo de usuários;
 
+        //Conectando com o receptor do microservice de autenticação_
         ClientsModule.register([
             {
                 //Name do clientProxy_
@@ -23,14 +24,29 @@ import { JwtGuard } from "./guards/jwt.guard";
                     //Url do endereço do broker robbitmq_
                     urls: ['amqp://guest:guest@localhost:5672'],
                     //Nome da fila no broker_
-                    queue: 'authorizations_queue',
+                    queue: 'ms_auth',//Se conectando com a fila do ms_auth;
                     queueOptions: {
                         durable: true,
                     }
                 },
 
             }
-        ])
+        ]),
+
+        //Conectando com o receptor do microservice de roles_
+        ClientsModule.register([
+            {
+                transport: Transport.RMQ,
+                name: 'ROLES_SERVICE',
+                options: {
+                    urls: ['amqp://guest:guest@localhost:5672'],
+                    queue: 'ms_role',
+                    queueOptions: {
+                        durable: true
+                    }
+                }
+            }
+        ]),
     ],
     controllers: [UsersController],
     providers: [

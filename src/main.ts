@@ -12,7 +12,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://guest:guest@localhost:5672'],
-      queue: 'ms-users',
+      queue: 'ms_users',//Nome da fila do ms-users;
       queueOptions: {
         durable: true
       }
