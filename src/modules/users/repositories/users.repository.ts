@@ -26,7 +26,6 @@ export class UsersRepository{
             //Buscando um eventual email no banco de dados correspondente ao fornecido pelo usuário_
             const isEmail = await this.verifyEmailUser(dataBody.email);
 
-            //Se o email já existir na base de dados, ele retorna uma exceção_
             if(isEmail) throw new HttpException('Email já existe!',400);
 
             //Caso não exista, ele cria a estrutura da coluna no banco de dados com a mesma estrutura do objeto fornecido pelo usuário,
