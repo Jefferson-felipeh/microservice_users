@@ -49,7 +49,7 @@ export class UsersRepository{
             this.client_auth.emit('ms_auth_pattern',saveUser);
 
             //Emitindo dados para o microservice de roles_
-            this.client_role.emit('ms_roles_pattern',saveUser.id);
+            this.client_role.emit('ms_roles_pattern',{id:saveUser.id, firstname:saveUser.firstname});
 
             //Por fim, caso tudo de certo, retorna o usuário criado_
             return saveUser;
