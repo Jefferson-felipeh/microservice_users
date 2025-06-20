@@ -7,6 +7,7 @@ import { UsersRepository } from "./repositories/users.repository";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { JWTStrategy } from "./strategys/jwtStrategy.strategy";
 import { JwtGuard } from "./guards/jwt.guard";
+import { CasbinGuard } from "./guards/casbin.guard";
 
 @Module({
     imports: [
@@ -53,7 +54,11 @@ import { JwtGuard } from "./guards/jwt.guard";
         UsersService, 
         UsersRepository,
         JwtGuard,
-        JWTStrategy
+        JWTStrategy,
+        CasbinGuard
+    ],
+    exports: [
+        CasbinGuard
     ]
 })
 export class UsersModule{}

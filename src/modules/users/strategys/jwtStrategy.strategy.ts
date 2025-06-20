@@ -16,16 +16,16 @@ export class JWTStrategy extends PassportStrategy(Strategy){
     async validate(payload:{user:string,sub:string, exp}){
         if(!payload.user || !payload.sub) throw new UnauthorizedException();
         
-        const expirationInSeconds = payload.exp;
-        const currentInSeconds = Math.floor(Date.now() / 1000);
+        // const expirationInSeconds = payload.exp;
+        // const currentInSeconds = Math.floor(Date.now() / 1000);
 
-        const secondsLeft = expirationInSeconds - currentInSeconds;
-        if(secondsLeft > 60) console.log(secondsLeft/60);
-        else console.log(secondsLeft);
+        // const secondsLeft = expirationInSeconds - currentInSeconds;
+        // if(secondsLeft > 60) console.log(secondsLeft/60);
+        // else console.log(secondsLeft);
 
         return {
             user: payload.user,
-            sub:payload.user,
+            sub:payload.sub,
             exp: payload.exp
         }
     }

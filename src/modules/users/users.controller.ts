@@ -1,16 +1,15 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { CreateUserDTO } from "./dtos/createUserDto.dto";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dtos/updateUserDto.dto";
 import { QueryUserDto } from "./dtos/queryUserDto.dto";
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { JwtGuard } from "./guards/jwt.guard";
+import { CasbinGuard } from "./guards/casbin.guard";
 
 @Controller({ path: 'users' })
 export class UsersController {
-
-    constructor(private usersService: UsersService) { }
-
+    constructor(private usersService: UsersService){}
     /* 
         Foi observado um comportamento nas funcionalidades dos endpoints: 
         - No Nestjs(e no framework subjacente, que é o Express), as rotas são avaliadas em ordem sequencial,
@@ -25,8 +24,8 @@ export class UsersController {
         não receba os parãmetros das rotas dinamicas.
     */
 
-    @UseGuards(JwtGuard)
-   @Get('query')
+    @UseGuards(JwtGuard,CasbinGuard)
+    @Get('query')
     async queryUser(@Query() query:QueryUserDto): Promise<QueryUserDto[]> {
        return this.usersService.queryUser(query);
     }
@@ -37,27 +36,27 @@ export class UsersController {
         return this.usersService.create(dataBody);
     }
 
-    @UseGuards(JwtGuard)
+    @UseGuards(JwtGuard,CasbinGuard)
     @Get('list')
     getAll(){
         return this.usersService.getAll();
     }
 
-    @UseGuards(JwtGuard)
-    @Get(':id')
+    @UseGuards(JwtGuard,CasbinGuard)
+    @Get('getOne/:id')
     getOne(@Param('id') id: string) {
         if(!id) throw new HttpException('ID Inválido!',400);
         return this.usersService.getOne(id);
     }
 
-    @UseGuards(JwtGuard)
+    @UseGuards(JwtGuard,CasbinGuard)
     @Delete('delete/:id')
     async delete(@Param('id') id: string): Promise<object> {
         if(!id) throw new HttpException('ID Inválido!',400);
         return this.usersService.delete(id);
     }
 
-    @UseGuards(JwtGuard)
+    @UseGuards(JwtGuard,CasbinGuard)
     @HttpCode(200)
     @Patch('update/:id')
     async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<UpdateUserDto> {
@@ -67,7 +66,6 @@ export class UsersController {
 
     @MessagePattern('find-user-by-email')
     async findUserByEmail(@Payload() email:string):Promise<CreateUserDTO>{
-        console.log(email);
         return this.usersService.findUserByEmail(email);
     }
 }
