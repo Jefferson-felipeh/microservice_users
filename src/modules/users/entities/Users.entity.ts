@@ -31,5 +31,4 @@ export class Users extends CommonEntity{
     //Senha do usuário_
     @Column({name: 'PASSWORD', type: 'varchar', length: 2000, nullable: false})
     password:string
-
 }
