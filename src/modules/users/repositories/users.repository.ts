@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDTO } from "../dtos/createUserDto.dto";
 import { ClientProxy } from "@nestjs/microservices";
 import { UpdateUserDto } from "../dtos/updateUserDto.dto";
+import { lastValueFrom } from "rxjs";
 
 @Injectable()
 export class UsersRepository{
@@ -159,13 +160,21 @@ export class UsersRepository{
         return false;
     }
 
-    async me(email:string):Promise<Users>{
+    async me(email:string):Promise<object>{
         if(!email) throw new HttpException('erro no email',400);
 
         const user = await this.repository.findOneBy({email});
-        
         if(!user) throw new HttpException('Usuário não encontrado!',400);
 
-        return user;
+        const rolesToUser = await lastValueFrom(
+            this.client_role.send('get-roles-and-permissions',user.id)
+        );
+
+        if(!rolesToUser) throw new HttpException('Roles não encontradas',403);
+
+        return {
+            user: user,
+            roles: rolesToUser
+        };
     }
 }

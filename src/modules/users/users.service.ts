@@ -7,7 +7,7 @@ import { QueryUserDto } from "./dtos/queryUserDto.dto";
 
 @Injectable()
 export class UsersService{
-    async findUserByEmail(email: string):Promise<CreateUserDTO> {
+    async findUserByEmail(email: string):Promise<object> {
         if(!email) throw new HttpException('Email Inválido!',400);
         
         const user = await this.repository.me(email);

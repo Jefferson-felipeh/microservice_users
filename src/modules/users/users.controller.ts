@@ -65,7 +65,7 @@ export class UsersController {
     }
 
     @MessagePattern('find-user-by-email')
-    async findUserByEmail(@Payload() email:string):Promise<CreateUserDTO>{
+    async findUserByEmail(@Payload() email:string):Promise<object>{
         return this.usersService.findUserByEmail(email);
     }
 }
