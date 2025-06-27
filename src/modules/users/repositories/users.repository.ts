@@ -170,11 +170,14 @@ export class UsersRepository{
             this.client_role.send('get-roles-and-permissions',user.id)
         );
 
+        console.log(rolesToUser);
+
         if(!rolesToUser) throw new HttpException('Roles não encontradas',403);
 
         return {
             user: user,
-            roles: rolesToUser
+            roles: rolesToUser.obj_roles,
+            permissions: rolesToUser.perms
         };
     }
 }

@@ -8,6 +8,7 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  //Receptor que irá receber as chamadas e conexões de outros microservices_
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
@@ -50,7 +51,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
 
-  await app.startAllMicroservices();
+  await app.startAllMicroservices();//Iniciando o microservice;
   await app.listen(3030);
 }
 bootstrap();

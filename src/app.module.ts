@@ -14,11 +14,16 @@ import { UsersModule } from './modules/users/users.module';
       //Esse é o namespace(espaço nomeado), que agrupa e organiza variaveis relacionadas do .env_
       load: [databaseConfig],
     }),
+
     TypeOrmModule.forRootAsync({//Configurações do typeorm_
       useClass: TypeOrmConfigService,
     }),
+
     UsersModule,
   ],
-  providers: [TypeOrmConfigService]
+  providers: [
+    //As configurações do Typeorm é injetável_
+    TypeOrmConfigService
+  ]
 })
 export class AppModule {}
