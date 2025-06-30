@@ -174,10 +174,13 @@ export class UsersRepository{
 
         if(!rolesToUser) throw new HttpException('Roles não encontradas',403);
 
-        return {
+        const dt = {
             user: user,
-            roles: rolesToUser.obj_roles,
-            permissions: rolesToUser.perms
+            roles: rolesToUser.casbin_data.obj_roles,
+            permissions: rolesToUser.casbin_data.perms,
+            menus: rolesToUser.menus
         };
+        console.log(dt)
+        return dt;
     }
 }
