@@ -169,18 +169,17 @@ export class UsersRepository{
         const rolesToUser = await lastValueFrom(
             this.client_role.send('get-roles-and-permissions',user.id)
         );
-
-        console.log(rolesToUser);
-
+        
         if(!rolesToUser) throw new HttpException('Roles não encontradas',403);
 
         const dt = {
             user: user,
             roles: rolesToUser.casbin_data.obj_roles,
             permissions: rolesToUser.casbin_data.perms,
-            menus: rolesToUser.menus
+            menus: rolesToUser.menus,
+            profiles:rolesToUser.profiles
         };
-        console.log(dt)
+        
         return dt;
     }
 }
