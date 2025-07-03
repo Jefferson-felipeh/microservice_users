@@ -42,9 +42,10 @@ export class UsersController {
         return this.usersService.getAll();
     }
 
-    @UseGuards(JwtGuard,CasbinGuard)
+    // @UseGuards(JwtGuard,CasbinGuard)
     @Get('getOne/:id')
     getOne(@Param('id') id: string) {
+        console.log(id);
         if(!id) throw new HttpException('ID Inválido!',400);
         return this.usersService.getOne(id);
     }
