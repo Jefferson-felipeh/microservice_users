@@ -23,10 +23,6 @@ export class JWTStrategy extends PassportStrategy(Strategy){
         // if(secondsLeft > 60) console.log(secondsLeft/60);
         // else console.log(secondsLeft);
 
-        return {
-            user: payload.user,
-            sub:payload.sub,
-            exp: payload.exp
-        }
+        return payload;
     }
 }
