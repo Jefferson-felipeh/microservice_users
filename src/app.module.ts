@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './common/config/database.config';
 import { TypeOrmConfigService } from 'src/database/typeorm-config.service';
 import { UsersModule } from './modules/users/users.module';
+import { MiddlewareBuilder } from '@nestjs/core';
+import { LoggerMiddleware } from './common/middlewares/loggerMiddleware.middleware';
 
 @Module({
   imports: [
@@ -26,4 +28,9 @@ import { UsersModule } from './modules/users/users.module';
     TypeOrmConfigService
   ]
 })
-export class AppModule {}
+export class AppModule implements NestModule{
+  configure(consumer: MiddlewareConsumer) {
+      consumer.apply(LoggerMiddleware)
+      .forRoutes('/users/user-permissions')
+  }
+}
