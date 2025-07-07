@@ -13,11 +13,11 @@ export class CasbinGuard implements CanActivate {
             const user = getRequest.user;
             const path = getRequest.route.path;
             const method = getRequest.method.toLowerCase();
-
+            
             const sllowed = await lastValueFrom(
                 this.client.send('casbinGuard-require', { user, path, method }),
             );
-
+            
             return sllowed;
         } catch (error) {
             console.error('Erro no CasbinGuard:', error.message || error);
