@@ -4,14 +4,18 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/all-exceptions.filter';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
     origin: 'http://localhost:4400',
+    //Preciso passar essa propriedade que permite que possa ser acessado os cookies do navegador_
+    credentials: true,
   });
 
+   app.use(cookieParser());
 
   //Receptor que irá receber as chamadas e conexões de outros microservices_
   app.connectMicroservice<MicroserviceOptions>({
