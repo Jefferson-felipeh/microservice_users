@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, Param, Patch, Post, Query, Req,Request, UseGuards } from "@nestjs/common";
 import { CreateUserDTO } from "./dtos/createUserDto.dto";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dtos/updateUserDto.dto";
@@ -6,6 +6,7 @@ import { QueryUserDto } from "./dtos/queryUserDto.dto";
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { JwtGuard } from "./guards/jwt.guard";
 import { CasbinGuard } from "./guards/casbin.guard";
+import { Request as ExRequest } from 'express';
 
 @Controller({ path: 'users' })
 export class UsersController {
@@ -72,7 +73,9 @@ export class UsersController {
 
     @UseGuards(JwtGuard,CasbinGuard)
     @Get('user-permissions')
-    async getUserPermissions(@Req() req):Promise<any>{
+    async getUserPermissions(
+        @Req() req,
+    ):Promise<any>{
         const email = req.user?.user;
         return this.usersService.findUserByEmail(email);
     }
