@@ -163,13 +163,14 @@ export class UsersRepository{
     async me(email:string):Promise<object>{
         if(!email) throw new HttpException('erro no email',400);
 
+        //Verificando se o usuário existe_
         const user = await this.repository.findOneBy({email});
         if(!user) throw new HttpException('Usuário não encontrado!',400);
 
+        //Buscando as permissões do usuário com base no seu id_
         const rolesToUser = await lastValueFrom(
             this.client_role.send('get-roles-and-permissions',user.id)
         );
-        
         if(!rolesToUser) throw new HttpException('Roles não encontradas',403);
 
         const dt = {
