@@ -71,6 +71,13 @@ export class UsersController {
         return this.usersService.findUserByEmail(email);
     }
 
+    //Esse endpoint servirá para validar o token obtido na requisição_
+    @UseGuards(JwtGuard)
+    @Get('validate')
+    validateToUser(@Req() req:ExRequest){
+        return {ok:true};
+    }
+
     @UseGuards(JwtGuard,CasbinGuard)
     @Get('user-permissions')
     async getUserPermissions(
