@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from "class-validator"
+import { IsEmail, IsNumber, IsString } from "class-validator"
 import { defaultProperty, IsStrongPassword } from "src/common/decorators/swagger.decorator"
 
 export class CreateUserDTO {
@@ -12,6 +12,7 @@ export class CreateUserDTO {
 
     @defaultProperty('Email do usuário','Email','example@gmail.com')
     @IsString({message: 'Email is required type string'})
+    @IsEmail()
     email: string
 
     @defaultProperty('CEP do usuário','CEP','00000-000')
